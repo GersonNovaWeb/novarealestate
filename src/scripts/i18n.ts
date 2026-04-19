@@ -150,11 +150,15 @@ export const T: Record<LangKey, Record<string, string>> = {
     stats_users:  'Happy Clients',
 
     /* ABOUT */
-    about_tag: 'Our Story',
-    about_h2:  'We\u2019re Changing How People Find Home',
-    about_p1:  'NOVA was born from a simple frustration: real estate is one of life\u2019s biggest decisions, yet the tools to navigate it haven\u2019t changed in decades.',
-    about_p2:  'We\u2019re building an AI-first platform that gives every buyer, seller, and agent the intelligence they need \u2014 faster, smarter, and with less stress.',
-    about_cta: 'Learn More',
+    about_tag:         'Our Story',
+    about_h2:          'We\u2019re Changing How People Find Home',
+    about_p1:          'NOVA was born from a simple frustration: real estate is one of life\u2019s biggest decisions, yet the tools to navigate it haven\u2019t changed in decades.',
+    about_p2:          'We\u2019re building an AI-first platform that gives every buyer, seller, and agent the intelligence they need \u2014 faster, smarter, and with less stress.',
+    about_cta:         'Learn More',
+    about_card1_label: 'Match Score',
+    about_card2_label: 'Time Saved',
+    about_card3_text:  'AI analysis complete',
+    about_card3_sub:   '3 perfect matches found',
 
     /* WAITLIST */
     waitlist_tag:       'Early Access',
@@ -326,11 +330,15 @@ export const T: Record<LangKey, Record<string, string>> = {
     stats_users:  'Clientes Felices',
 
     /* ABOUT */
-    about_tag: 'Nuestra Historia',
-    about_h2:  'Cambiamos C\u00f3mo la Gente Encuentra Hogar',
-    about_p1:  'NOVA naci\u00f3 de una frustraci\u00f3n simple: comprar una propiedad es una de las decisiones m\u00e1s importantes de la vida, pero las herramientas para hacerlo no han cambiado en d\u00e9cadas.',
-    about_p2:  'Estamos construyendo una plataforma con IA que da a cada comprador, vendedor y agente la inteligencia que necesita \u2014 m\u00e1s r\u00e1pido, m\u00e1s inteligente y con menos estr\u00e9s.',
-    about_cta: 'M\u00e1s Informaci\u00f3n',
+    about_tag:         'Nuestra Historia',
+    about_h2:          'Cambiamos C\u00f3mo la Gente Encuentra Hogar',
+    about_p1:          'NOVA naci\u00f3 de una frustraci\u00f3n simple: comprar una propiedad es una de las decisiones m\u00e1s importantes de la vida, pero las herramientas para hacerlo no han cambiado en d\u00e9cadas.',
+    about_p2:          'Estamos construyendo una plataforma con IA que da a cada comprador, vendedor y agente la inteligencia que necesita \u2014 m\u00e1s r\u00e1pido, m\u00e1s inteligente y con menos estr\u00e9s.',
+    about_cta:         'M\u00e1s Informaci\u00f3n',
+    about_card1_label: 'Coincidencia',
+    about_card2_label: 'Tiempo Ahorrado',
+    about_card3_text:  'An\u00e1lisis de IA completado',
+    about_card3_sub:   '3 coincidencias perfectas',
 
     /* WAITLIST */
     waitlist_tag:         'Acceso Anticipado',
