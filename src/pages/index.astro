@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import FeaturesFull from '../components/FeaturesFull.astro';
+import Results from '../components/Results.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Pricing from '../components/Pricing.astro';
+import Properties from '../components/Properties.astro';
+import About from '../components/About.astro';
+import Waitlist from '../components/Waitlist.astro';
+import Footer from '../components/Footer.astro';
+---
+<Layout title="NOVA Real Estate — Never Miss a Lead Again">
+  <Nav />
+  <Hero />
+  <Features />
+  <HowItWorks />
+  <FeaturesFull />
+  <Results />
+  <Testimonials />
+  <Pricing />
+  <Properties />
+  <About />
+  <Waitlist />
+  <Footer />
+</Layout>
+
+<script>
+  import { initNav }          from '../scripts/nav';
+  import { initI18n }         from '../scripts/i18n';
+  import { initHeroScene }    from '../scripts/hero-three';
+  import { initAnimations }   from '../scripts/animations';
+  import { initWaitlistForm } from '../scripts/waitlist-form';
+
+  initNav();
+  initI18n();
+  initHeroScene();
+  initAnimations();
+  initWaitlistForm();
+</script>

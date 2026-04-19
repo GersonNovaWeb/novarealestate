@@ -1,0 +1,38 @@
+<section id="waitlist" class="waitlist-section">
+  <div class="waitlist-bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="waitlist-inner">
+      <span class="section-tag" data-i18n="waitlist_tag">Early Access</span>
+      <h2 data-i18n="waitlist_h2">Ready to stop losing leads?</h2>
+      <p data-i18n="waitlist_sub">Join 127 agents already on the waitlist. Early access members get 30% off for life.</p>
+
+      <form id="waitlist-form" novalidate>
+        <div class="form-row">
+          <input
+            type="email"
+            id="waitlist-email"
+            name="email"
+            data-i18n-placeholder="waitlist_placeholder"
+            placeholder="Enter your email address"
+            required
+            autocomplete="email"
+          />
+          <button type="submit" class="btn-primary" data-i18n="waitlist_btn">Get Early Access</button>
+        </div>
+        <p class="form-privacy" data-i18n="waitlist_privacy">No credit card required &middot; Cancel anytime &middot; Live in 20 minutes</p>
+        <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
+      </form>
+
+      <div class="waitlist-success" id="waitlist-success" aria-live="polite">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="#c9a96e" stroke-width="1.5"/>
+            <path d="M10 16l4 4 8-8" stroke="#c9a96e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 data-i18n="waitlist_success_h">You&rsquo;re on the list!</h3>
+        <p data-i18n="waitlist_success_p">We&rsquo;ll reach out when Nova is ready for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
