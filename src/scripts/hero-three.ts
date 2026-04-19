@@ -207,7 +207,7 @@ export function initHeroScene() {
       dummy.updateMatrix();
       hexTops.setMatrixAt(i, dummy.matrix);
     }
-.
+
     hexTops.instanceMatrix.needsUpdate   = true;
     hexTops.instanceColor!.needsUpdate   = true;
     hexBodies.instanceMatrix.needsUpdate = true;
