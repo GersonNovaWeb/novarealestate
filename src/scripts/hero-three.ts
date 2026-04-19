@@ -9,9 +9,15 @@ export function initHeroScene() {
   if (!canvas) return;
 
   const isMobile = window.innerWidth < 768;
-  const COLS = isMobile ? 24 : 44;
-  const ROWS = isMobile ? 16 : 28;
-  const count = COLS * ROWS;
+
+  // Mobile: smaller hexes (0.38 radius) + more rows to fill portrait viewport at FOV 58
+  const FOV       = isMobile ? 58   : 52;
+  const hexRadius = isMobile ? 0.38 : 0.45;
+  const hexW      = isMobile ? 0.84 : 1.0;
+  const hexH      = Math.sqrt(3) * 0.5 * hexW;
+  const COLS      = isMobile ? 22   : 44;
+  const ROWS      = isMobile ? 50   : 28;
+  const count     = COLS * ROWS;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setClearColor(0x000000, 1);
@@ -24,13 +30,11 @@ export function initHeroScene() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.set(0, 28, 0.001);
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 
-  const hexW = 1.0;
-  const hexH = Math.sqrt(3) * 0.5;
   const cx   = new Float32Array(count);
   const cz   = new Float32Array(count);
   const distFromCenter = new Float32Array(count);
@@ -56,8 +60,8 @@ export function initHeroScene() {
   const targetBrightness = new Float32Array(count).fill(0);
   const currentHeight    = new Float32Array(count).fill(0.3);
 
-  const topGeo  = new THREE.CylinderGeometry(0.45, 0.45, 0.06, 6, 1, false);
-  const bodyGeo = new THREE.CylinderGeometry(0.44, 0.44, 1.0, 6, 1, true);
+  const topGeo  = new THREE.CylinderGeometry(hexRadius,        hexRadius,        0.06, 6, 1, false);
+  const bodyGeo = new THREE.CylinderGeometry(hexRadius - 0.01, hexRadius - 0.01, 1.0,  6, 1, true);
 
   const topMat  = new THREE.MeshBasicMaterial({ toneMapped: false });
   const bodyMat = new THREE.MeshBasicMaterial({ toneMapped: false });
@@ -214,9 +218,11 @@ export function initHeroScene() {
   });
 
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    composer?.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(w, h);
+    composer?.setSize(w, h);
   });
 }
