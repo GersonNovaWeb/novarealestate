@@ -10,14 +10,10 @@ export function initHeroScene() {
 
   const isMobile = window.innerWidth < 768;
 
-  // Mobile: smaller hexes (0.38 radius) + more rows to fill portrait viewport at FOV 58
   const FOV       = isMobile ? 58   : 52;
   const hexRadius = isMobile ? 0.38 : 0.45;
   const hexW      = isMobile ? 0.84 : 1.0;
   const hexH      = Math.sqrt(3) * 0.5 * hexW;
-  const COLS      = isMobile ? 22   : 44;
-  const ROWS      = isMobile ? 50   : 28;
-  const count     = COLS * ROWS;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setClearColor(0x000000, 1);
@@ -35,30 +31,48 @@ export function initHeroScene() {
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 
-  const cx   = new Float32Array(count);
-  const cz   = new Float32Array(count);
-  const distFromCenter = new Float32Array(count);
-  const phase          = new Float32Array(count);
-  let maxGridRadius = 0;
+  function calcGridDims(w: number, h: number) {
+    const fovRad = (FOV * Math.PI) / 180;
+    const visibleHeight = 2 * Math.tan(fovRad / 2) * camera.position.y;
+    const visibleWidth  = visibleHeight * (w / h);
+    const cols = Math.ceil(visibleWidth  / hexW) + 4;
+    const rows = Math.ceil(visibleHeight / hexH) + 4;
+    return { cols, rows };
+  }
 
-  for (let col = 0; col < COLS; col++) {
-    for (let row = 0; row < ROWS; row++) {
-      const i = col * ROWS + row;
-      const x = col * hexW - (COLS * hexW) / 2 + hexW / 2;
-      const z = row * hexH - (ROWS * hexH) / 2 + hexH / 2
-                + (col % 2 === 1 ? hexH / 2 : 0);
-      cx[i] = x;
-      cz[i] = z;
-      const d = Math.sqrt(x * x + z * z);
-      distFromCenter[i] = d;
-      if (d > maxGridRadius) maxGridRadius = d;
-      phase[i] = Math.random() * Math.PI * 2;
+  let { cols, rows } = calcGridDims(window.innerWidth, window.innerHeight);
+  let count = cols * rows;
+
+  let cx              = new Float32Array(count);
+  let cz              = new Float32Array(count);
+  let distFromCenter  = new Float32Array(count);
+  let phase           = new Float32Array(count);
+  let maxGridRadius   = 0;
+
+  let brightness       = new Float32Array(count).fill(0);
+  let targetBrightness = new Float32Array(count).fill(0);
+  let currentHeight    = new Float32Array(count).fill(0.3);
+
+  function buildGrid(c: number, r: number) {
+    maxGridRadius = 0;
+    const offsetX = -(c * hexW) / 2;
+    const offsetZ = -(r * hexH) / 2;
+    for (let col = 0; col < c; col++) {
+      for (let row = 0; row < r; row++) {
+        const i = col * r + row;
+        const x = col * hexW + (row % 2 === 0 ? 0 : hexW / 2) + offsetX;
+        const z = row * hexH + offsetZ;
+        cx[i] = x;
+        cz[i] = z;
+        const d = Math.sqrt(x * x + z * z);
+        distFromCenter[i] = d;
+        if (d > maxGridRadius) maxGridRadius = d;
+        phase[i] = Math.random() * Math.PI * 2;
+      }
     }
   }
 
-  const brightness       = new Float32Array(count).fill(0);
-  const targetBrightness = new Float32Array(count).fill(0);
-  const currentHeight    = new Float32Array(count).fill(0.3);
+  buildGrid(cols, rows);
 
   const topGeo  = new THREE.CylinderGeometry(hexRadius,        hexRadius,        0.06, 6, 1, false);
   const bodyGeo = new THREE.CylinderGeometry(hexRadius - 0.01, hexRadius - 0.01, 1.0,  6, 1, true);
@@ -66,8 +80,8 @@ export function initHeroScene() {
   const topMat  = new THREE.MeshBasicMaterial({ toneMapped: false });
   const bodyMat = new THREE.MeshBasicMaterial({ toneMapped: false });
 
-  const hexTops   = new THREE.InstancedMesh(topGeo,  topMat,  count);
-  const hexBodies = new THREE.InstancedMesh(bodyGeo, bodyMat, count);
+  let hexTops   = new THREE.InstancedMesh(topGeo,  topMat,  count);
+  let hexBodies = new THREE.InstancedMesh(bodyGeo, bodyMat, count);
   hexTops.frustumCulled   = false;
   hexBodies.frustumCulled = false;
   scene.add(hexTops);
@@ -75,24 +89,29 @@ export function initHeroScene() {
 
   const dummy     = new THREE.Object3D();
   const darkColor = new THREE.Color(0, 0.004, 0.002);
-  for (let i = 0; i < count; i++) {
-    dummy.position.set(cx[i], 0.15, cz[i]);
-    dummy.scale.set(1, 0.3, 1);
-    dummy.updateMatrix();
-    hexBodies.setMatrixAt(i, dummy.matrix);
 
-    dummy.position.set(cx[i], 0.33, cz[i]);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    hexTops.setMatrixAt(i, dummy.matrix);
+  function initInstances() {
+    for (let i = 0; i < count; i++) {
+      dummy.position.set(cx[i], 0.15, cz[i]);
+      dummy.scale.set(1, 0.3, 1);
+      dummy.updateMatrix();
+      hexBodies.setMatrixAt(i, dummy.matrix);
 
-    hexBodies.setColorAt(i, darkColor);
-    hexTops.setColorAt(i, darkColor);
+      dummy.position.set(cx[i], 0.33, cz[i]);
+      dummy.scale.set(1, 1, 1);
+      dummy.updateMatrix();
+      hexTops.setMatrixAt(i, dummy.matrix);
+
+      hexBodies.setColorAt(i, darkColor);
+      hexTops.setColorAt(i, darkColor);
+    }
+    hexBodies.instanceMatrix.needsUpdate = true;
+    hexTops.instanceMatrix.needsUpdate   = true;
+    hexBodies.instanceColor!.needsUpdate = true;
+    hexTops.instanceColor!.needsUpdate   = true;
   }
-  hexBodies.instanceMatrix.needsUpdate = true;
-  hexTops.instanceMatrix.needsUpdate   = true;
-  hexBodies.instanceColor!.needsUpdate = true;
-  hexTops.instanceColor!.needsUpdate   = true;
+
+  initInstances();
 
   scene.add(new THREE.AmbientLight(0x000805, 0.6));
 
@@ -224,5 +243,36 @@ export function initHeroScene() {
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
     composer?.setSize(w, h);
+
+    const { cols: newCols, rows: newRows } = calcGridDims(w, h);
+    if (Math.abs(newCols - cols) > 2 || Math.abs(newRows - rows) > 2) {
+      cols  = newCols;
+      rows  = newRows;
+      count = cols * rows;
+
+      cx              = new Float32Array(count);
+      cz              = new Float32Array(count);
+      distFromCenter  = new Float32Array(count);
+      phase           = new Float32Array(count);
+      brightness       = new Float32Array(count).fill(0);
+      targetBrightness = new Float32Array(count).fill(0);
+      currentHeight    = new Float32Array(count).fill(0.3);
+
+      buildGrid(cols, rows);
+
+      scene.remove(hexTops);
+      scene.remove(hexBodies);
+      hexTops.dispose();
+      hexBodies.dispose();
+
+      hexTops   = new THREE.InstancedMesh(topGeo,  topMat,  count);
+      hexBodies = new THREE.InstancedMesh(bodyGeo, bodyMat, count);
+      hexTops.frustumCulled   = false;
+      hexBodies.frustumCulled = false;
+      scene.add(hexTops);
+      scene.add(hexBodies);
+
+      initInstances();
+    }
   });
 }
